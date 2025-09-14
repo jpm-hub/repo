@@ -45,7 +45,6 @@ lang: "language : <input-choice>"
       dependencies:
         - mvn org.slf4j slf4j-simple:latest
         - mvn io.javalin javalin:latest
-        {{if-eq lang[language] kotlin -> - mvn org.jetbrains.kotlin kotlin-test:latest test}}
       repos:
         - mvn: https://repo1.maven.org/maven2/
   - public/index.html: |
