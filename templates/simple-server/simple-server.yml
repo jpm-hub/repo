@@ -1,13 +1,4 @@
-<start-message>: |
-  ^^^^^^^__                  ___           _____
-        / /___ __   ______ _/ (_)___      / ___/
-   __  / / __ `/ | / / __ `/ / / __ \    / __ \
-  / /_/ / /_/ /| |/ / /_/ / / / / / /   / /_/ /
-  \____/\__,_/ |___/\__,_/_/_/_/ /_/    \____/
-
-       https://javalin.io/documentation
-
-package: pac-man
+package: simple-server
 lang: "language : <input-choice>"
 <choice>:lang:java:
   title: Java (from oracle)
@@ -36,7 +27,7 @@ lang: "language : <input-choice>"
         serve: jpm build && jpm run
         build: cp -rf public out/public && jpm compile
         dev: jpm run -hot "(jpm_app/**|public/**)" "cp -rf public out/public"
-        clean: rm -rf out/* dist
+        clean: rm -rf out dist
         # overrides the default 'jpm install' command
         install@: |
           curl -o public/logo.svg https://javalin.io/img/logo.svg 
@@ -215,10 +206,11 @@ template-kotlin:
       }
 <templating>: template-{{lang[language]}}
 <finish-message>: |
-  Your Javalin app is ready 🚀
-  To get started, run:
+  ^^____________  ___
+    |_  | ___ \  \/  |  
+      | | |_/ / .  . |  
+      | |  __/| |\/| |  ⬇️  -> jpm install
+  /\__/ / |   | |  | |  
+  \____/\_|   \_|  |_/  🚀 -> jpm serve
 
-      jpm install
-      jpm serve
-  
   Then open http://localhost:7000 in your browser.🌎
