@@ -25,6 +25,7 @@ lang: "language : <input-choice>"
 
 <jpm-init>: "{{package}} {{lang[arg]}}"
 <template-init>:
+  - out/:
   - .env: PORT=7000
   - package.yml: |
       main: {{package.under}}.{{package.under.title}}{{lang[suffix]}}
