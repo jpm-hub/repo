@@ -147,6 +147,9 @@ lang: "language : <input-choice>"
       .input-group button:hover {
         background: #00bfae;
       }
+  - resources/application.yml: |
+      spring:
+        output.ansi.enabled: ALWAYS
 template-java:
   - "{{package.snake}}/{{package.camel}}.java": |
       package {{package.snake}};
