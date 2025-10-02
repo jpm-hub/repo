@@ -31,7 +31,7 @@ lang: "language : <input-choice>"
       language: {{lang[language]}}
       scripts:
         start: jpm build && jpm run
-        build: rsync resources/* out/ && jpm compile
+        build: jpm compile && cp resources/* out/
         dev: jpm watch "(resources/*.fxml|{{package.snake}}/**)" "jpm start"
         clean: rm -rf out/* dist
         install@: jpm install:{\{jpm.OS-ARCH}\} ...args@
