@@ -1,0 +1,220 @@
+<start-message>: |
+  ^^.   ____          _            __ _ _
+   /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+  ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+    '  |____| .__|_| |_|_| |_\__, | / / / /
+   =========|_|==============|___/=/_/_/_/
+
+package: "package name : <input-text-sanitized>"
+lang: "language : <input-choice>"
+<choice>:lang:java:
+  title: Java (from oracle)
+  language: java
+  suffix: ""
+  fileSuffix: java
+  arg: -java
+<choice>:lang:kotlin:
+  title: Kotlin (from jetbrains)
+  language: kotlin
+  suffix: Kt
+  fileSuffix: kt
+  arg: -kt
+<jpm-init>: "jpm init {{package}} {{lang[arg]}}"
+<template-init>:
+  - out/:
+  - .env: PORT=8080
+  - package.yml: |
+      main: {{package.snake}}.{{package.camel}}{{lang[suffix]}}
+      package: {{package}}
+      version: 0.0.0
+      language: {{lang[language]}}
+      env: .env
+      springVerison: 3.5.5
+      scripts:
+        serve: jpm build && jpm run --server.port={\{env.PORT}\}
+        clean: rm -rf out dist jpm_dependencies
+        build: jpm compile && jpm copy
+        dev: jpm build && jpm run -hot "({{package.snake}}/**.java|resources/**.html)" "jpm copy" --server.port={\{env.PORT}\}
+        copy: rm -rf out/resources && cp -rf resources/* out/
+        # overrides the default 'jpm install' command
+        install@: |
+          curl -o resources/static/logo.svg https://spring.io/img/projects/spring-boot.svg
+          jpm install
+      dependencies:
+        - org.springframework.boot spring-boot-starter-web:{\{springVerison}\}
+        - org.springframework.boot spring-boot-starter-thymeleaf:{\{springVerison}\}
+      repos:
+        - default: https://repo1.maven.org/maven2/
+      excludes:
+        - jakarta.annotation-api
+      args:
+        javac: -parameters
+        kotlinc: -java-parameters -jvm-target 17
+  - resources/templates/index.html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>JPM Spring App</title>
+        <link rel="stylesheet" href="index.css">
+      </head>
+      <body>
+        <div class="card">
+          <h1>JPM Spring App</h1>
+          <a href="https://spring.io/guides" target="_blank" rel="noopener">
+            <img src="/logo.svg" alt="Logo" class="logo">
+          </a>
+          <th:block th:if="${print != null}">
+            <p th:text="${print}"></p>
+          </th:block>
+          <th:block th:if="${print == null}">
+            <form class="input-group" id="printForm" autocomplete="off">
+              <input type="text" id="printInput" placeholder="Type something..." required>
+              <button type="submit">Go</button>
+            </form>
+          </th:block>
+        </div>
+        <script>
+          document.getElementById('printForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const value = document.getElementById('printInput').value.trim();
+            if (value) {window.location.href = '/?print=' + encodeURIComponent(value);}
+          });
+        </script>
+      </body>
+      </html>
+  - resources/static/index.css: |
+      body {
+        margin: 0;
+        height: 100vh;
+        background: #1de9b6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+      }
+      .card {
+        background: #fff;
+        padding: 2rem 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 320px;
+      }
+      .card h1 {
+        margin: 0 0 1.2rem 0;
+        font-size: 1.7rem;
+        color: #009688;
+        letter-spacing: 1px;
+      }
+      .card img.logo {
+        display: block;
+        margin-bottom: 0.2rem;
+        width: 140px;
+        height: 48px;
+        object-fit: contain;
+      }
+      .input-group {
+        width: 100%;
+        display: flex;
+        gap: 0.5rem;
+      }
+      .input-group input[type="text"] {
+        flex: 1;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #b2dfdb;
+        border-radius: 6px;
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.2s;
+      }
+      .input-group input[type="text"]:focus {
+        border-color: #26c6da;
+      }
+      .input-group button {
+        padding: 0.5rem 1rem;
+        background: #1de9b6;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .input-group button:hover {
+        background: #00bfae;
+      }
+template-java:
+  - "{{package.snake}}/{{package.camel}}.java": |
+      package {{package.snake}};
+      import org.springframework.boot.SpringApplication;
+      import org.springframework.boot.autoconfigure.SpringBootApplication;
+      import org.springframework.stereotype.Controller;
+      import org.springframework.ui.Model;
+      import org.springframework.web.bind.annotation.*;
+      @SpringBootApplication
+      @Controller
+      public class {{package.camel}} {
+        public static void main(String[] args) {
+          SpringApplication.run({{package.camel}}.class, args);
+        }
+        @GetMapping("/")
+        public String index(@RequestParam(value = "print", required = false) String print, Model model) {
+          model.addAttribute("print", print);
+          return "index";
+        }
+      }
+  - "tests/Test{{package.camel}}.java": |
+      package tests;
+      import org.junit.*;
+      public class Test{{package.camel}} {
+          @Test
+          public void test() {
+            Assert.assertEquals(true, true);
+          }
+      }
+template-kotlin:
+  - "{{package.snake}}/{{package.camel}}.kt": |
+      package {{package.snake}}
+      import org.springframework.boot.autoconfigure.SpringBootApplication
+      import org.springframework.boot.runApplication
+      import org.springframework.stereotype.Controller
+      import org.springframework.ui.Model
+      import org.springframework.web.bind.annotation.GetMapping
+      import org.springframework.web.bind.annotation.RequestParam
+      @SpringBootApplication
+      @Controller
+      class {{package.camel}} {
+          @GetMapping("/")
+          fun index(@RequestParam(value = "print", required = false) print: String?, model: Model): String {
+              model.addAttribute("print", print)
+              return "index"
+          }
+      }
+      fun main(args: Array<String>) {
+          runApplication<{{package.camel}}>(*args)
+      }
+  - "tests/Test{{package.camel}}.kt": |
+      package tests
+      import org.junit.Test
+      import org.junit.Assert
+      class Test{{package.camel}} {
+          @Test
+          fun test() {
+              Assert.assertEquals(true, true)
+          }
+      }
+<templating>: template-{{lang[language]}}
+<finish-message>: |
+  ╔══════════════════════════════════════════════════════════════════════════╗
+  ║  Your Spring Boot app is ready 🚀                                        ║
+  ║  To get started, run:                                                    ║
+  ║                                                                          ║
+  ║      jpm install                                                         ║
+  ║      jpm serve                                                           ║
+  ║                                                                          ║
+  ║  Then open http://localhost:8080 in your browser.🌎                      ║
+  ╚══════════════════════════════════════════════════════════════════════════╝

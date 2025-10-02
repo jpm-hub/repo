@@ -1,0 +1,73 @@
+#!/bin/bash
+
+printMessage() {
+    echo "Usage: replacer <env_file> <target_file> [destination_dir]"
+    echo "Will replace variables in target_file using values from env_file"
+}
+
+if [ "$#" -eq 0 ]; then
+    printMessage
+    exit 0
+fi
+# Check arguments
+if [ "$#" -lt 2 ]; then
+    printMessage
+    exit 1
+fi
+
+ENV_FILE="$1"
+TARGET_FILE="$2"
+DEST_DIR="$3"
+
+# Check if files exist
+if [ ! -f "$ENV_FILE" ]; then
+    echo "Error: Environment file '$ENV_FILE' not found"
+    exit 1
+fi
+
+if [ ! -f "$TARGET_FILE" ]; then
+    echo "Error: Target file '$TARGET_FILE' not found"
+    exit 1
+fi
+
+# Prepare output file path
+if [ -n "$DEST_DIR" ]; then
+    mkdir -p "$DEST_DIR"
+    OUT_FILE="$DEST_DIR/$(basename "$TARGET_FILE")"
+else
+    OUT_FILE="$TARGET_FILE"
+fi
+
+TEMP_FILE=$(mktemp)
+
+
+# Read .env into associative array
+declare -a env_vars
+while IFS='=' read -r key value || [ -n "$key" ]; do
+    key=$(echo "$key" | xargs) # trim spaces
+    value=$(echo "$value" | xargs)
+    if [[ -n "$key" && ! "$key" =~ ^# ]]; then
+        env_vars["$key"]="$value"
+    fi
+done < "$ENV_FILE"
+
+# Replace all {{ KEY }} patterns in target file
+while IFS= read -r line || [ -n "$line" ]; do
+    # Loop until no more {{ ... }} patterns
+    while [[ "$line" =~ \{\{[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*\}\} ]]; do
+        var_name="${BASH_REMATCH[1]}"
+        replacement="${env_vars[$var_name]}"
+        if [ -n "$replacement" ]; then
+            # Replace all occurrences with value
+            line=$(echo "$line" | sed -E "s/\{\{[[:space:]]*$var_name[[:space:]]*\}\}/$replacement/g")
+        else
+            # If not found, leave as is and continue to next pattern
+            break
+        fi
+    done
+    echo "$line" >> "$TEMP_FILE"
+done < "$TARGET_FILE"
+
+mv "$TEMP_FILE" "$OUT_FILE"
+
+echo "Variables have been replaced in $OUT_FILE"

@@ -1,0 +1,160 @@
+<start-message>: |
+  ^^^^^^^█████ █████████  █████   █████ █████████  ███████████ █████ █████
+        ░░███ ███░░░░░███░░███   ░░███ ███░░░░░███░░███░░░░░░█░░███ ░░███ 
+         ░███░███    ░███ ░███    ░███░███    ░███ ░███   █ ░  ░░███ ███  
+         ░███░███████████ ░███    ░███░███████████ ░███████     ░░█████   
+         ░███░███░░░░░███ ░░███   ███ ░███░░░░░███ ░███░░░█      ███░███  
+   ███   ░███░███    ░███  ░░░█████░  ░███    ░███ ░███  ░     ░███ ░░███ 
+  ░░████████░█████   █████   ░░███    █████   ██████████      ░█████ █████
+
+package: "package name : <input-text-sanitized>"
+lang: "language : <input-choice>"
+<choice>:lang:java:
+  title: Java (from oracle)
+  language: java
+  suffix: ""
+  fileSuffix: java
+  arg: -java
+
+<choice>:lang:kotlin:
+  title: Kotlin (from jetbrains)
+  language: kotlin
+  suffix: Kt
+  fileSuffix: kt
+  arg: -kt
+<jpm-init>: jpm init {{package}} {{lang[arg]}}
+<template-init>:
+  - package.yml: |
+      main: {{package.snake}}.{{package.camel}}
+      package: {{package}}
+      version: 0.0.0
+      language: {{lang[language]}}
+      scripts:
+        start: jpm build && jpm run
+        build: rsync resources/* out/ && jpm compile
+        dev: jpm watch "(resources/*.fxml|{{package.snake}}/**)" "jpm start"
+        clean: rm -rf out/* dist
+        install@: jpm install:{\{jpm.OS-ARCH}\} ...args@
+        install:darwin-amd64: JFX=mac jpm install ...args@
+        install:windows-amd64: JFX=win jpm install ...args@
+        install:linux-amd64: JFX=linux jpm install ...args@
+        install:darwin-arm64: JFX=mac-aarch64 jpm install ...args@
+      dependencies:
+        - org.openjfx javafx-controls:21.0.7
+        - org.openjfx javafx-fxml:21.0.7
+      classifiers:
+        org.openjfx: '{\{ ENV.JFX }\}'
+      repos:
+        - default: https://repo1.maven.org/maven2/
+      args:
+        java: --add-modules javafx.controls,javafx.fxml
+  - resources/main.fxml: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <?import javafx.scene.control.Button?>
+      <?import javafx.scene.control.Label?>
+      <?import javafx.scene.effect.DropShadow?>
+      <?import javafx.scene.layout.AnchorPane?>
+      <?import javafx.scene.layout.VBox?>
+      <AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+        style="-fx-background-color: #1de9b6;">
+        <VBox alignment="CENTER"
+            spacing="20"
+            style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 40;"
+            AnchorPane.topAnchor="100"
+            AnchorPane.bottomAnchor="100"
+            AnchorPane.leftAnchor="200"
+            AnchorPane.rightAnchor="200">
+            <Label text="JPM JavaFX App" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+            <Label fx:id="counterLabel" text="Count: 0" style="-fx-font-size: 16px; -fx-text-fill: #666;" />
+            <Button fx:id="clickButton" text="Click Me!" onAction="#handleButtonClick"
+              style="-fx-background-color: #1de9b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-width: 120; -fx-background-radius: 8;" />
+            <effect><DropShadow color="#00000040" radius="10" /></effect>
+        </VBox>
+      </AnchorPane>
+template-java:
+  - "{{package.snake}}/{{package.camel}}.java": |
+      package {{package.snake}};
+      import javafx.fxml.*;
+      import javafx.scene.Scene;
+      import javafx.stage.Stage;
+      import javafx.scene.control.*;
+      import javafx.application.Application;
+      public class {{package.camel}} extends Application {
+        public static void main(String[] args) {launch(args);}
+        @Override public void start(Stage primaryStage) throws Exception {
+          FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
+          loader.setController(this);
+          primaryStage.setTitle("JPM JavaFX App");
+          primaryStage.setScene(new Scene(loader.load(), 800, 600));
+          primaryStage.show();
+        }
+        private int counter = 0;
+        @FXML private Label counterLabel;
+        @FXML private Button clickButton;
+        @FXML private void initialize() {updateCounterLabel();}
+        private void updateCounterLabel() {counterLabel.setText("Counter: " + counter);}
+        @FXML private void handleButtonClick() {
+          counter++;
+          updateCounterLabel();
+        }
+      }
+  - test/{{package.snake}}/Test{{package.camel}}.java: |
+      package tests;
+      import org.junit.Test;
+      import static org.junit.Assert.*;
+      import {{package.snake}}.{{package.camel}};
+      public class Test{{package.camel}} {
+        @Test public void test() {
+          {{package.camel}} app = new {{package.camel}}();
+          assertEquals("{{package.snake}}.{{package.camel}}", app.getClass().getName());
+        }
+      }
+template-kotlin:
+  - "{{package.snake}}/{{package.camel}}.kt": |
+      package {{package.snake}}
+      import javafx.fxml.*
+      import javafx.scene.Scene
+      import javafx.stage.Stage
+      import javafx.scene.control.*
+      import javafx.application.Application
+      class {{package.camel}} : Application() {
+        companion object {
+          @JvmStatic fun main(args: Array<String>) {launch({{package.camel}}::class.java, *args)}
+        }
+        override fun start(primaryStage: Stage) {
+          val loader = FXMLLoader(javaClass.getResource("/main.fxml"))
+          loader.setController(this)
+          primaryStage.title = "JPM JavaFX App"
+          primaryStage.scene = Scene(loader.load(), 800.0, 600.0)
+          primaryStage.show()
+        }
+        private var counter = 0
+        @FXML private lateinit var counterLabel: Label
+        @FXML private lateinit var clickButton: Button
+        @FXML private fun initialize() {updateCounterLabel()}
+        private fun updateCounterLabel() {counterLabel.text = "Counter: $counter"}
+        @FXML private fun handleButtonClick() {
+          counter++
+          updateCounterLabel()
+        }
+      }
+  - test/{{package.snake}}/Test{{package.camel}}.kt: |
+      package tests
+      import org.junit.Test
+      import kotlin.test.assertEquals
+      import packa_name.PackaName
+      class TestPackaName {
+        @Test fun test() {
+          val app = PackaName()
+          assertEquals("packa_name.PackaName", app::class.qualifiedName)
+        }
+      }
+<templating>: template-{{lang[language]}}
+<finish-message>: |
+  ┌───────────────────────────────────────────────┐
+  │ Your JavaFX app is ready 🚀                   │
+  │ To get started, run:                          │
+  │                                               │
+  │   📦  jpm install                             │
+  │   🚀  jpm start                               │
+  └───────────────────────────────────────────────┘

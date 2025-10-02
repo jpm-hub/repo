@@ -1,0 +1,19 @@
+#!/bin/bash
+printMessage() {
+    echo "Usage: rconcurrently [commands...]"
+    echo "Will run commands concurrently"
+}
+if [ "$#" -eq 0 ]; then
+    printMessage
+    exit 0
+fi
+
+trap "kill 0" SIGINT
+i=0
+for cmd in "$@"; do
+    (
+        eval "$cmd" 2>&1 | sed "s/^/[${i}] /"
+    ) &
+    i=$((i+1))
+done
+wait

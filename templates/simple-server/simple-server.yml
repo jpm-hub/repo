@@ -14,12 +14,12 @@ lang: "language : <input-choice>"
   fileSuffix: kt
   arg: -kt
 
-<jpm-init>: "{{package}} {{lang[arg]}}"
+<jpm-init>: "jpm init {{package}} {{lang[arg]}}"
 <template-init>:
   - .env: PORT=7000
   - out/:
   - package.yml: |
-      main: {{package.under}}.{{package.under.title}}{{lang[suffix]}}
+      main: {{package.snake}}.{{package.camel}}{{lang[suffix]}}
       package: {{package}}
       version: 0.0.0
       language: {{lang[language]}}
@@ -27,17 +27,17 @@ lang: "language : <input-choice>"
       scripts:
         serve: jpm build && jpm run
         build: cp -rf public out/public && jpm compile
-        dev: jpm run -hot "(jpm_app/**|public/**)" "cp -rf public out/public"
+        dev: jpm run -hot "({{package.snake}}/**|public/**)" "cp -rf public out/public"
         clean: rm -rf out dist
         # overrides the default 'jpm install' command
         install@: |
           curl -o public/logo.svg https://javalin.io/img/logo.svg 
           jpm install
       dependencies:
-        - mvn org.slf4j slf4j-simple:latest
-        - mvn io.javalin javalin:latest
+        - org.slf4j slf4j-simple:latest
+        - io.javalin javalin:latest
       repos:
-        - mvn: https://repo1.maven.org/maven2/
+        - default: https://repo1.maven.org/maven2/
   - public/index.html: |
       <!DOCTYPE html>
       <html lang="en">
@@ -130,12 +130,12 @@ lang: "language : <input-choice>"
         background: #00bfae;
       }
 template-java:
-  - "{{package.under}}/{{package.under.title}}.{{lang[fileSuffix]}}": |
-      package {{package.under}};
+  - "{{package.snake}}/{{package.camel}}.{{lang[fileSuffix]}}": |
+      package {{package.snake}};
       import io.javalin.Javalin;
       import io.javalin.http.Handler;
       import io.javalin.http.staticfiles.Location;
-      public class {{package.under.title}} {
+      public class {{package.camel}} {
           public static void main(String[] args) {
               Javalin app = Javalin.create(config -> {
                   config.staticFiles.add(staticFiles -> {
@@ -156,12 +156,12 @@ template-java:
           };
       }
 
-  - "tests/Test{{package.under.title}}.{{lang[fileSuffix]}}": |
+  - "tests/Test{{package.camel}}.{{lang[fileSuffix]}}": |
       package tests;
       import org.junit.Test;
       import org.junit.*;
-      import {{package.under}}.{{package.under.title}};
-      public class Test{{package.under.title}} {
+      import {{package.snake}}.{{package.camel}};
+      public class Test{{package.camel}} {
           @Test
           public void testApp() {
               Assert.assertTrue(true);
@@ -169,8 +169,8 @@ template-java:
       }
 
 template-kotlin:
-  - "{{package.under}}/{{package.under.title}}.{{lang[fileSuffix]}}": |
-      package {{package.under}}
+  - "{{package.snake}}/{{package.camel}}.{{lang[fileSuffix]}}": |
+      package {{package.snake}}
       import io.javalin.*
       import io.javalin.http.Handler
       import io.javalin.http.staticfiles.Location
@@ -191,11 +191,11 @@ template-kotlin:
           ctx.result("Received data: $data")
       }
 
-  - "tests/Test{{package.under.title}}.{{lang[fileSuffix]}}": |
+  - "tests/Test{{package.camel}}.{{lang[fileSuffix]}}": |
       package tests
       import org.junit.*
       import kotlin.test.*
-      import {{package.under}}.*
+      import {{package.snake}}.*
 
       class TestJpm {
           @Test
