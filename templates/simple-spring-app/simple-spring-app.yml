@@ -35,7 +35,7 @@ lang: "language : <input-choice>"
         serve: jpm build && jpm run --server.port={\{env.PORT}\}
         clean: rm -rf out dist jpm_dependencies
         build: jpm compile && jpm copy
-        dev: jpm build && jpm run -hot "({{package.snake}}/**.java|resources/**.html)" "jpm copy" --server.port={\{env.PORT}\}
+        dev: jpm build && jpm run -hot "({{package.snake}}/**|resources/**.html)" "jpm copy" --server.port={\{env.PORT}\}
         copy: rm -rf out/resources && cp -rf resources/* out/
         # overrides the default 'jpm install' command
         install@: |
