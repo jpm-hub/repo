@@ -72,7 +72,7 @@ lang: "language : <input-choice>"
               }
           }
       }
-  - ui/src/App.tsx: |
+  - ui/src/App.tsx:  |
       import { useEffect, useState } from "react"
       import reactLogo from "./assets/react.svg"
       import viteLogo from "/vite.svg"
