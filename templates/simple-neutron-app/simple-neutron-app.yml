@@ -172,7 +172,7 @@ lang: "language : <input-choice>"
           <script>
             window.addEventListener("neutron-ready", () => {
               console.log("Neutron UI Loaded 🚀");
-              window.java.setDraggable("logo");
+              window.java.setDraggableElement("logo");
             });
             
             // Long click logic
