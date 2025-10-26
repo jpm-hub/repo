@@ -20,7 +20,11 @@ lang: "language : <input-choice>"
   fileSuffix: kt
   arg: -kt
 
-<init-script>: jpm init {{package}} {{lang[arg]}}
+<init-script>: |
+  jpm init {{package}} {{lang[arg]}}
+  echo "" | npm create vite@latest ui -- --template react-ts
+  cd ui && npm install && cd ..
+
 <template-init>:
   - package.yml: |
       main: {{package.snake}}.{{package.camel}}{{lang[suffix]}}
@@ -29,10 +33,11 @@ lang: "language : <input-choice>"
       language: {{lang[language]}}
       scripts:
         start: jpm compile && jpm run
-        compile@: jpm compile && jpm cp
         cp: cp -r resources/* out/
         clean: rm -rf out/* dist 
-        dev: jpm compile && jpm run -hot "(resources/**|{{package.snake}}/*)" "jpm start"
+        compile@: jpm compile && jpm build
+        build: cd ui && npm run build && jpm cp
+        dev: jpm compile && jpm run -hot "(ui/src/**|{{package.snake}}/*)" "jpm build"
         install@: jpm install:{\{jpm.OS-ARCH}\} ...args@
         install:windows-amd64: JFX=win jpm install ...args@
         install:darwin-amd64: JFX=mac jpm install ...args@
@@ -46,165 +51,72 @@ lang: "language : <input-choice>"
         - default: https://repo1.maven.org/maven2/
       args:
         java: --add-modules javafx.controls,javafx.graphics,javafx.web
-  - resources/ui/index.html: |
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <title>Neutron Desktop Apps</title>
-          <style>
-            body {
-              font-family: Arial;
-              background: #ffffff;
-              margin: 0;
-              padding: 0;
-              min-height: 100vh;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              overflow: hidden;
-              user-select: none;
-              -webkit-user-select: none;
-              cursor: default;
-            }
-            .container {
-              background: #fff;
-              padding: 2rem 2.5rem;
-              border-radius: 14px;
-              box-shadow: 0 8px 32px rgba(45, 108, 223, 0.12),
-                0 1.5px 6px rgba(0, 0, 0, 0.04);
-              text-align: center;
-              max-width: 400px;
-              border: 1.5px solid #eaf3ff;
-            }
-            .logo {
-              width: 56px;
-              height: 56px;
-              margin-bottom: 1rem;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              box-shadow: 0 2px 12px rgba(45, 108, 223, 0.15);
-              background: linear-gradient(225deg, #2d6cdf 50%, #c1f0ff 100%);
-              z-index: -1;
-              animation: rotateBg 4s cubic-bezier(0.39, 0.15, 0.36, 0.85) infinite;
-            }
-            @keyframes rotateBg {
-              from {
-                transform: rotate(0deg);
+  - ui/vite.config.ts: |
+      import { defineConfig } from 'vite'
+      import react from '@vitejs/plugin-react'
+      // https://vite.dev/config/
+      export default defineConfig({
+          base: './',
+          build: { outDir: '../resources/ui', emptyOutDir: true },
+          plugins: [react()],
+      })
+  - ui/src/global.d.ts: |
+      export {};
+      declare global {
+          interface Window {
+              java: {
+                  log:(s:any)=> void;
               }
-              to {
-                transform: rotate(360deg);
+              js: {
+                  setMessage:(s:string)=> void;
               }
-            }
-            .logo svg {
-              width: 32px;
-              height: 32px;
-              fill: #fff;
-            }
-            h1 {
-              color: #2d6cdf;
-              font-size: 1.7rem;
-              font-weight: 700;
-              margin-bottom: 0.5rem;
-              letter-spacing: -1px;
-            }
-            .desc {
-              color: #333;
-              font-size: 1.05rem;
-              font-weight: 500;
-              margin-bottom: 1.1rem;
-            }
-            .cta-btn {
-              font: 1em Arial, sans-serif;
-              display: inline-block;
-              padding: 0.6em 1.6em;
-              font-weight: bold;
-              color: #fff;
-              background: linear-gradient(90deg, #2d6cdf, #5ad6ff);
-              background-size: 200% 100%; /* allow animation space */
-              background-position: 0% 50%;
-              border: none;
-              border-radius: 6px;
-              box-shadow: 0 2px 8px rgba(45, 108, 223, 0.13);
-              cursor: pointer;
-              transition: transform 0.2s, background-position 0.5s;
-            }
-
-            .cta-btn:hover {
-              animation: button-hover 0.5s linear forwards;
-              transform: translateY(-2px) scale(1.03);
-            }
-
-            @keyframes button-hover {
-              0% {
-                background-position: 0% 50%;
-              }
-              100% {
-                background-position: 100% 50%;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div id="logo" class="logo">
-              <svg viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" />
-                <path
-                  d="M24 12v24M12 24h24"
-                  stroke="#fff"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  fill="none"
-                />
-              </svg>
+          }
+      }
+  - ui/src/App.tsx:|
+      import { useEffect, useState } from "react"
+      import reactLogo from "./assets/react.svg"
+      import viteLogo from "/vite.svg"
+      import "./App.css"
+      function App() {
+        const [count, setCount] = useState(0)
+        const [message, setMessage] = useState("");
+        useEffect(() => {
+          window.js.setMessage = setMessage;
+        }, []);
+        return (
+          <><div>
+              <img src={viteLogo} className="logo" alt="Vite logo" />
+              <img src={reactLogo} className="logo react" alt="React logo" />
             </div>
-            <h1>Neutron</h1>
-            <div class="desc">Native desktop apps with web tech</div>
-            <p class="desc" id="rpl"></p>
-            <button class="cta-btn" id="longClickBtn">Click Me</button>
-          </div>
-          <script>
-            window.addEventListener("neutron-ready", () => {
-              console.log("Neutron UI Loaded 🚀");
-              window.java.setDraggableElement("logo");
-            });
-            
-            // Long click logic
-            const btn = document.getElementById("longClickBtn");
-            let longClickTimer;
-            const LONG_CLICK_DURATION = 600; // ms
-            
-            btn.addEventListener("mousedown", () => {
-              longClickTimer = setTimeout(() => {
-                alert("Long Click Detected!");
-              }, LONG_CLICK_DURATION);
-              console.log("try to drag the neutron logo 😊");
-            });
-
-            btn.addEventListener("mouseup", () => {
-              clearTimeout(longClickTimer);
-              console.log("try long click the button 🎈");
-            });
-
-            btn.addEventListener("mouseleave", () => {
-              clearTimeout(longClickTimer);
-            });
-          </script>
-        </body>
-      </html>
-
-
+            <h1>Vite + React + Neutron</h1>
+            <div>{message}</div>
+            <div className="card">
+              <button onClick={() => setCount((count) => {window.java.log("count: " + (count + 1)); return count + 1})}>
+                count is {count}
+              </button>
+            </div>
+          </>
+        )
+      }
+      export default App
 template-java:
   - "{{package.snake}}/{{package.camel}}.java": |
       package {{package.snake}};
+      import neutron.Controller
       import neutron.Neutron;
       public class {{package.camel}} {
+        public static class AppController extends Controller {
+            public void log(String msg) {
+                System.out.println("From JS: " + msg);
+                call("setMessage", "Hello from Neutron Controller, Received: " + msg);
+            }
+        }
         public static void main(String[] args) {
-          Neutron.launch();
+            AppController ctrl = new AppController();
+            new Neutron.builder()
+                .controller(ctrl)
+                .size(670.0, 480.0)
+                .launch(args);
         }
       }
   - "tests/Test{{package.camel}}.java": |
@@ -219,9 +131,21 @@ template-java:
 template-kotlin:
   - "{{package.snake}}/{{package.camel}}.kt": |
       package {{package.snake}};
+      import neutron.Controller
       import neutron.Neutron;
+      class AppController : Controller() {
+          fun log(msg: String) {
+              println("From JS: $msg")
+              call("setMessage", "Hello from Neutron Controller, Received: $msg")
+          }
+      }
+
       fun main(args: Array<String>) {
-          Neutron.launch();
+          val ctrl = AppController()
+          Neutron.builder()
+              .controller(ctrl)
+              .size(670.0, 480.0)
+              .launch(args)
       }
   - "tests/Test{{package.camel}}.kt": |
       package tests
