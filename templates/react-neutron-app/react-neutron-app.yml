@@ -1,0 +1,169 @@
+<start-message>: |
+  ^_____         _               
+  |   | |___ _ _| |_ ___ ___ ___ 
+  | | | | -_| | |  _|  _| . |   |
+  |_|___|___|___|_| |_| |___|_|_|
+
+package: "package name : <input-text-sanitized>"
+lang: "language : <input-choice>"
+<choice>:lang:java:
+  title: Java (from oracle)
+  language: java
+  suffix: ""
+  fileSuffix: java
+  arg: -java
+
+<choice>:lang:kotlin:
+  title: Kotlin (from jetbrains)
+  language: kotlin
+  suffix: Kt
+  fileSuffix: kt
+  arg: -kt
+
+<init-script>: |
+  jpm init {{package}} {{lang[arg]}}
+  echo "" | npm create vite@latest ui -- --template react-ts
+  cd ui && npm install && cd ..
+
+<template-init>:
+  - package.yml: |
+      main: {{package.snake}}.{{package.camel}}{{lang[suffix]}}
+      package: {{package}}
+      version: 0.0.0
+      language: {{lang[language]}}
+      scripts:
+        start: jpm compile && jpm run
+        cp: cp -r resources/* out/
+        clean: rm -rf out/* dist 
+        compile@: jpm compile && jpm build
+        build: cd ui && npm run build && jpm cp
+        dev: jpm compile && jpm run -hot "(ui/src/**|{{package.snake}}/*)" "jpm build"
+        install@: jpm install:{\{jpm.OS-ARCH}\} ...args@
+        install:windows-amd64: JFX=win jpm install ...args@
+        install:darwin-amd64: JFX=mac jpm install ...args@
+        install:darwin-arm64: JFX=mac-aarch64 jpm install ...args@
+        install:linux-amd64: JFX=linux jpm install ...args@
+      dependencies:
+        - neutron
+      classifiers:
+        org.openjfx: '{\{ ENV.JFX }\}'
+      repos:
+        - default: https://repo1.maven.org/maven2/
+      args:
+        java: --add-modules javafx.controls,javafx.graphics,javafx.web
+  - ui/vite.config.ts: |
+      import { defineConfig } from 'vite'
+      import react from '@vitejs/plugin-react'
+      // https://vite.dev/config/
+      export default defineConfig({
+          base: './',
+          build: { outDir: '../resources/ui', emptyOutDir: true },
+          plugins: [react()],
+      })
+  - ui/src/global.d.ts: |
+      export {};
+      declare global {
+          interface Window {
+              java: {
+                  log:(s:any)=> void;
+              }
+              js: {
+                  setMessage:(s:string)=> void;
+              }
+          }
+      }
+  - ui/src/App.tsx:|
+      import { useEffect, useState } from "react"
+      import reactLogo from "./assets/react.svg"
+      import viteLogo from "/vite.svg"
+      import "./App.css"
+      function App() {
+        const [count, setCount] = useState(0)
+        const [message, setMessage] = useState("");
+        useEffect(() => {
+          window.js.setMessage = setMessage;
+        }, []);
+        return (
+          <><div>
+              <img src={viteLogo} className="logo" alt="Vite logo" />
+              <img src={reactLogo} className="logo react" alt="React logo" />
+            </div>
+            <h1>Vite + React + Neutron</h1>
+            <div>{message}</div>
+            <div className="card">
+              <button onClick={() => setCount((count) => {window.java.log("count: " + (count + 1)); return count + 1})}>
+                count is {count}
+              </button>
+            </div>
+          </>
+        )
+      }
+      export default App
+template-java:
+  - "{{package.snake}}/{{package.camel}}.java": |
+      package {{package.snake}};
+      import neutron.Controller
+      import neutron.Neutron;
+      public class {{package.camel}} {
+        public static class AppController extends Controller {
+            public void log(String msg) {
+                System.out.println("From JS: " + msg);
+                call("setMessage", "Hello from Neutron Controller, Received: " + msg);
+            }
+        }
+        public static void main(String[] args) {
+            AppController ctrl = new AppController();
+            new Neutron.builder()
+                .controller(ctrl)
+                .size(670.0, 480.0)
+                .launch(args);
+        }
+      }
+  - "tests/Test{{package.camel}}.java": |
+      package tests;
+      import org.junit.*;
+      public class Test{{package.camel}} {
+          @Test
+          public void test() {
+            Assert.assertEquals(true, true);
+          }
+      }
+template-kotlin:
+  - "{{package.snake}}/{{package.camel}}.kt": |
+      package {{package.snake}};
+      import neutron.Controller
+      import neutron.Neutron;
+      class AppController : Controller() {
+          fun log(msg: String) {
+              println("From JS: $msg")
+              call("setMessage", "Hello from Neutron Controller, Received: $msg")
+          }
+      }
+
+      fun main(args: Array<String>) {
+          val ctrl = AppController()
+          Neutron.builder()
+              .controller(ctrl)
+              .size(670.0, 480.0)
+              .launch(args)
+      }
+  - "tests/Test{{package.camel}}.kt": |
+      package tests
+      import org.junit.Test
+      import org.junit.Assert
+      class Test{{package.camel}} {
+          @Test
+          fun test() {
+              Assert.assertEquals(true, true)
+          }
+      }
+
+<templating>: template-{{lang[language]}}
+<finish-message>: |
+  ┌───────────────────────────────────────────────┐
+  │ Your app is ready 🚀                          │
+  │ To get started, run:                          │
+  │                                               │
+  │   📦  jpm install                             │
+  │   📺  jpm start                               │
+  └───────────────────────────────────────────────┘
