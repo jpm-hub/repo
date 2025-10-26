@@ -4,8 +4,6 @@
   | | | | -_| | |  _|  _| . |   |
   |_|___|___|___|_| |_| |___|_|_|
 
-
-
 package: "package name : <input-text-sanitized>"
 lang: "language : <input-choice>"
 <choice>:lang:java:
@@ -22,7 +20,7 @@ lang: "language : <input-choice>"
   fileSuffix: kt
   arg: -kt
 
-<jpm-init>: jpm init {{package}} {{lang[arg]}}
+<init-script>: jpm init {{package}} {{lang[arg]}}
 <template-init>:
   - package.yml: |
       main: {{package.snake}}.{{package.camel}}{{lang[suffix]}}

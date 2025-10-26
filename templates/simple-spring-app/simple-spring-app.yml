@@ -20,7 +20,7 @@ lang: "language : <input-choice>"
   suffix: Kt
   fileSuffix: kt
   arg: -kt
-<jpm-init>: "jpm init {{package}} {{lang[arg]}}"
+<init-script>: "jpm init {{package}} {{lang[arg]}}"
 <template-init>:
   - out/:
   - .env: PORT=8080

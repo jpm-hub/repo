@@ -14,7 +14,7 @@ lang: "language : <input-choice>"
   fileSuffix: kt
   arg: -kt
 
-<jpm-init>: "jpm init {{package}} {{lang[arg]}}"
+<init-script>: "jpm init {{package}} {{lang[arg]}}"
 <template-init>:
   - .env: PORT=7000
   - out/:
