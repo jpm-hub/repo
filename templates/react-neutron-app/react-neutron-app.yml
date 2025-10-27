@@ -102,7 +102,7 @@ lang: "language : <input-choice>"
 template-java:
   - "{{package.snake}}/{{package.camel}}.java": |
       package {{package.snake}};
-      import neutron.Controller
+      import neutron.Controller;
       import neutron.Neutron;
       public class {{package.camel}} {
         public static class AppController extends Controller {
