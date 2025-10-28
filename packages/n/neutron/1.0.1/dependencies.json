@@ -1,0 +1,21 @@
+{
+  "classified": false,
+  "JPM": {},
+  "repos": {
+    "https://repo1.maven.org/maven2/": {
+      "com.fasterxml.jackson.core|jackson-annotations": "2.20",
+      "com.fasterxml.jackson.core|jackson-core": "2.20.0",
+      "com.fasterxml.jackson.core|jackson-databind": "2.20.0",
+      "org.openjfx|javafx-base": "21.0.8",
+      "org.openjfx|javafx-controls": "21.0.8",
+      "org.openjfx|javafx-graphics": "21.0.8",
+      "org.openjfx|javafx-media": "21.0.8",
+      "org.openjfx|javafx-web": "21.0.8",
+      "|org.openjfx|javafx-base": "21.0.8",
+      "|org.openjfx|javafx-graphics": "21.0.8",
+      "|org.openjfx|javafx-controls": "21.0.8",
+      "|org.openjfx|javafx-media": "21.0.8",
+      "|org.openjfx|javafx-web": "21.0.8"
+    }
+  }
+}
