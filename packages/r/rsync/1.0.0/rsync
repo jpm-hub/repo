@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if $(jpm is-windows > /dev/null ); then
+    java -p "jpm_dependencies;jpm_dependencies/execs" -cp "jpm_dependencies/*;jpm_dependencies/execs/*" rsync.Rsync $@
+    exit $?; else
+    java -p jpm_dependencies:jpm_dependencies/execs -cp "jpm_dependencies/*:jpm_dependencies/execs/*" rsync.Rsync $@
+    exit $?
+fi; echo "unknown OS" && exit 1
