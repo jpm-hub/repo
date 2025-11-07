@@ -32,10 +32,10 @@ lang: "language : <input-choice>"
         # overrides the default 'jpm install' command
         install@: |
           curl -o public/logo.svg https://javalin.io/img/logo.svg 
-          jpm install
+          jpm install ...args@
       dependencies:
         - org.slf4j slf4j-simple:latest
-        - io.javalin javalin:latest
+        - io.javalin javalin:6.7.0
       repos:
         - default: https://repo1.maven.org/maven2/
   - public/index.html: |
