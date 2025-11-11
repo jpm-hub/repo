@@ -40,7 +40,7 @@ lang: "language : <input-choice>"
         # overrides the default 'jpm install' command
         install@: |
           curl -o resources/static/logo.svg https://spring.io/img/projects/spring-boot.svg
-          jpm install
+          jpm install ...args@
       dependencies:
         - org.springframework.boot spring-boot-starter-web:{\{springVerison}\}
         - org.springframework.boot spring-boot-starter-thymeleaf:{\{springVerison}\}
