@@ -24,6 +24,7 @@ lang: "language : <input-choice>"
   arg: -kt
 <init-script>: jpm init {{package}} {{lang[arg]}}
 <template-init>:
+  - out/:
   - package.yml: |
       main: {{package.snake}}.{{package.camel}}
       package: {{package}}
