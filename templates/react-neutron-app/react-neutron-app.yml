@@ -26,6 +26,7 @@ lang: "language : <input-choice>"
   cd ui && npm install && cd ..
 
 <template-init>:
+  - out/:
   - package.yml: |
       main: {{package.snake}}.{{package.camel}}{{lang[suffix]}}
       package: {{package}}
