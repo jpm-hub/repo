@@ -1,0 +1,7 @@
+#!/bin/bash
+if $(jpm is-windows > /dev/null ); then
+    java -cp "jpm_dependencies/*;jpm_dependencies/execs/*" MainMethodScanner $@
+    exit $?; else
+    java -cp "jpm_dependencies/*:jpm_dependencies/execs/*" MainMethodScanner $@
+    exit $?
+fi; echo "unknown OS" && exit 1
