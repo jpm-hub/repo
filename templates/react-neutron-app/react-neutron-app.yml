@@ -51,7 +51,7 @@ lang: "language : <input-choice>"
       repos:
         - default: https://repo1.maven.org/maven2/
       args:
-        java: --add-modules javafx.controls,javafx.graphics,javafx.web
+        java: --enable-native-access=ALL-UNNAMED
   - ui/vite.config.ts: |
       import { defineConfig } from 'vite'
       import react from '@vitejs/plugin-react'
