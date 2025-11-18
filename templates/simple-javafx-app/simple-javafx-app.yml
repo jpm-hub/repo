@@ -30,6 +30,7 @@ lang: "language : <input-choice>"
       package: {{package}}
       version: 0.0.0
       language: {{lang[language]}}
+      modular: true
       scripts:
         start: jpm build && jpm run
         build: jpm compile && cp resources/* out/
