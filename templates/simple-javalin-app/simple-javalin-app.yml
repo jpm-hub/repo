@@ -35,8 +35,8 @@ lang: "language : <input-choice>"
       env: .env
       scripts:
         serve: jpm build && jpm run
-        build: cp -rf public out/public && jpm compile
-        dev: jpm run -hot "({{package.snake}}/**|public/**)" "cp -rf public out/public"
+        build: cp -rf public out/ && jpm compile
+        dev: jpm run -hot "({{package.snake}}/**|public/**)" "cp -rf public out/"
         clean: rm -rf out/* dist
         # overrides the default 'jpm install' command
         install@: |
