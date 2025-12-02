@@ -1,0 +1,32 @@
+#!/bin/bash
+export DEV_PORT=3600
+export DEV_VERSION=1.0.0
+case "$1" in
+    init)
+        if [ -z "$2" ]; then
+            echo "Error: PORT argument is required for init.";exit 1
+        fi
+        DEV_PORT=$2
+        sed -i.bak "s/export DEV_PORT=3600/export DEV_PORT=$DEV_PORT/" "$0"
+        mkdir -p out
+        cp -f jpm_dependencies/execs/dev-$DEV_VERSION.jar out/dev.jar > /dev/null 2>&1 || cp -f jpm_dependencies/dev-$DEV_VERSION.jar out/dev.jar > /dev/null 2>&1
+        echo "Initialized DEV_PORT to $DEV_PORT"
+        exit 0
+        ;;
+    -h|--help)
+        echo "Usage: dev [init PORT] | [event] | [-h|--help]"
+        echo "  init PORT    Initialize the development server with the specified PORT."
+        echo "  event        sends event."
+        echo "  -h, --help   Show this help message."
+        exit 0
+        ;;
+    *)
+        ;;
+esac
+rm -f "$0.bak" > /dev/null 2>&1
+if $(jpm is-windows > /dev/null ); then
+    java -cp "jpm_dependencies/*;jpm_dependencies/execs/*" dev.Main $DEV_PORT $@
+    exit $?; else
+    java -cp "jpm_dependencies/*:jpm_dependencies/execs/*" dev.Main $DEV_PORT $@
+    exit $?
+fi; echo "unknown OS" && exit 1
