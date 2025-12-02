@@ -7,7 +7,7 @@ case "$1" in
             echo "Error: PORT argument is required for init.";exit 1
         fi
         DEV_PORT=$2
-        sed -i.bak "s/export DEV_PORT=3600/export DEV_PORT=$DEV_PORT/" "$0"
+        sed -i.bak "s/export DEV_PORT=3600/export DEV_PORT=$DEV_PORT/" "jpm_dependencies/execs/dev"
         mkdir -p out
         cp -f jpm_dependencies/execs/dev-$DEV_VERSION.jar out/dev.jar > /dev/null 2>&1 || cp -f jpm_dependencies/dev-$DEV_VERSION.jar out/dev.jar > /dev/null 2>&1
         echo "Initialized DEV_PORT to $DEV_PORT"
@@ -23,7 +23,7 @@ case "$1" in
     *)
         ;;
 esac
-rm -f "$0.bak" > /dev/null 2>&1
+rm -f "jpm_dependencies/execs/dev.bak" > /dev/null 2>&1
 if $(jpm is-windows > /dev/null ); then
     java -cp "jpm_dependencies/*;jpm_dependencies/execs/*" dev.Main $DEV_PORT $@
     exit $?; else
