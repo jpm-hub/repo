@@ -1,0 +1,37 @@
+{
+  "classified": false,
+  "dependencies": [
+    "org.openjfx javafx-web:21.0.8",
+    "com.fasterxml.jackson.core jackson-databind:latest",
+    "org.openjfx jdk-jsobject:25.0.1",
+    "concurrently:1.0.0 exec",
+    "dev:1.0.0 exec",
+    "jpm:1.0.3"
+  ],
+  "JPM": {
+    "jpm": "1.0.3"
+  },
+  "repos": {
+    "https://repo1.maven.org/maven2/": {
+      "com.fasterxml.jackson.core|jackson-annotations": "2.20",
+      "com.fasterxml.jackson.core|jackson-core": "2.20.1",
+      "com.fasterxml.jackson.core|jackson-databind": "2.20.1",
+      "org.openjfx|javafx-base": "21.0.8",
+      "org.openjfx|javafx-controls": "21.0.8",
+      "org.openjfx|javafx-graphics": "21.0.8",
+      "org.openjfx|javafx-media": "21.0.8",
+      "org.openjfx|javafx-web": "21.0.8",
+      "org.openjfx|jdk-jsobject": "25.0.1",
+      "|org.openjfx|javafx-base": "21.0.8",
+      "|org.openjfx|javafx-controls": "21.0.8",
+      "|org.openjfx|javafx-graphics": "21.0.8",
+      "|org.openjfx|javafx-media": "21.0.8",
+      "|org.openjfx|javafx-web": "21.0.8",
+      "|org.openjfx|jdk-jsobject": "25.0.1"
+    }
+  },
+  "scripts": {
+    "concurrently": "concurrently-1.0.0.jar|https://raw.githubusercontent.com/jpm-hub/repo/refs/heads/main/packages/c/concurrently/1.0.0/concurrently-1.0.0.jar|https://raw.githubusercontent.com/jpm-hub/repo/refs/heads/main/packages/c/concurrently/1.0.0/concurrently",
+    "dev": "dev-1.0.0.jar|https://raw.githubusercontent.com/jpm-hub/repo/refs/heads/main/packages/d/dev/1.0.0/dev-1.0.0.jar|https://raw.githubusercontent.com/jpm-hub/repo/refs/heads/main/packages/d/dev/1.0.0/dev"
+  }
+}
