@@ -100,7 +100,7 @@ template-java:
           updateCounterLabel();
         }
       }
-  - test/{{package.snake}}/Test{{package.camel}}.java: |
+  - tests/Test{{package.camel}}.java: |
       package tests;
       import org.junit.Test;
       import static org.junit.Assert.*;
@@ -140,7 +140,7 @@ template-kotlin:
           updateCounterLabel()
         }
       }
-  - test/{{package.snake}}/Test{{package.camel}}.kt: |
+  - tests/Test{{package.camel}}.kt: |
       package tests
       import org.junit.Test
       import kotlin.test.assertEquals
