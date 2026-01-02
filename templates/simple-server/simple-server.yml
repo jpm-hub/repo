@@ -1,4 +1,4 @@
-package: simple-server
+package: server
 lang: "language : <input-choice>"
 <choice>:lang:java:
   title: Java (from oracle)
@@ -206,6 +206,14 @@ template-kotlin:
       }
 <templating>: template-{{lang[language]}}
 <finish-message>: |
+
+
+
+
+
+
+  Server created
+  
   📦 -> jpm install
   🚀 -> jpm serve
 
