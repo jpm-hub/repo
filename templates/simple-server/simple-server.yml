@@ -206,11 +206,7 @@ template-kotlin:
       }
 <templating>: template-{{lang[language]}}
 <finish-message>: |
-  ^^____________  ___
-    |_  | ___ \  \/  |  
-      | | |_/ / .  . |  
-      | |  __/| |\/| |  ⬇️  -> jpm install
-  /\__/ / |   | |  | |  
-  \____/\_|   \_|  |_/  🚀 -> jpm serve
+  📦 -> jpm install
+  🚀 -> jpm serve
 
   Then open http://localhost:7000 in your browser.🌎
