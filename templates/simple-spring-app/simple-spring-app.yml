@@ -5,8 +5,9 @@
    \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
     '  |____| .__|_| |_|_| |_\__, | / / / /
   ==========|_|==============|___/=/_/_/_/
-  :: Spring Boot ::                (v3.5.5)
+  :: Spring Boot ::                (v{{version}})
 package: "package name : <input-text-sanitized>"
+version: 4.0.3
 lang: "language : <input-choice>"
 <choice>:lang:java:
   title: Java (from oracle)
@@ -30,7 +31,7 @@ lang: "language : <input-choice>"
       version: 0.0.0
       language: {{lang[language]}}
       env: .env
-      springVerison: 3.5.5
+      springVersion: {{version}}
       scripts:
         serve: jpm build && jpm run --server.port={\{env.PORT}\}
         clean: rm -rf out dist jpm_dependencies
