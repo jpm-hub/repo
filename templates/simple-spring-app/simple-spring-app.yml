@@ -32,6 +32,7 @@ lang: "language : <input-choice>"
       language: {{lang[language]}}
       env: .env
       springVersion: {{version}}
+      logo: resources/static/logo.svg
       scripts:
         serve: jpm build && jpm run --server.port={\{env.PORT}\}
         clean: rm -rf out dist jpm_dependencies
@@ -40,15 +41,13 @@ lang: "language : <input-choice>"
         copy: rm -rf out/resources && cp -rf resources/* out/
         # overrides the default 'jpm install' command
         install@: |
-          curl -o resources/static/logo.svg https://spring.io/img/projects/spring-boot.svg
+          [ -e {\{logo}\} ] || curl -o {\{logo}\} https://spring.io/img/projects/spring-boot.svg
           jpm install ...args@
       dependencies:
         - org.springframework.boot spring-boot-starter-web:{\{springVerison}\}
         - org.springframework.boot spring-boot-starter-thymeleaf:{\{springVerison}\}
       repos:
         - default: https://repo1.maven.org/maven2/
-      excludes:
-        - jakarta.annotation-api
       args:
         javac: -parameters
         kotlinc: -java-parameters -jvm-target 17
@@ -213,12 +212,12 @@ template-kotlin:
       }
 <templating>: template-{{lang[language]}}
 <finish-message>: |
-  ╔══════════════════════════════════════════════════════════════════════════╗
-  ║  Your Spring Boot app is ready 🚀                                        ║
-  ║  To get started, run:                                                    ║
-  ║                                                                          ║
-  ║      jpm install                                                         ║
-  ║      jpm serve                                                           ║
-  ║                                                                          ║
-  ║  Then open http://localhost:8080 in your browser.🌎                      ║
-  ╚══════════════════════════════════════════════════════════════════════════╝
+  ╔════════════════════════════════════════════════════════╗
+  ║  Your Spring Boot app is ready 🚀                      ║
+  ║  To get started, run:                                  ║
+  ║                                                        ║
+  ║      jpm install                                       ║
+  ║      jpm serve                                         ║
+  ║                                                        ║
+  ║  Then open http://localhost:8080 in your browser.🌎    ║
+  ╚════════════════════════════════════════════════════════╝
