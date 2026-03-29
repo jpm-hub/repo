@@ -1,3 +1,4 @@
+version: 4.0.3
 <start-message>: |
   ^^.   ____          _            __ _ _
    /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -7,7 +8,6 @@
   ==========|_|==============|___/=/_/_/_/
   :: Spring Boot ::                (v{{version}})
 package: "package name : <input-text-sanitized>"
-version: 4.0.3
 lang: "language : <input-choice>"
 <choice>:lang:java:
   title: Java (from oracle)
@@ -44,8 +44,8 @@ lang: "language : <input-choice>"
           [ -e {\{logo}\} ] || curl -o {\{logo}\} https://spring.io/img/projects/spring-boot.svg
           jpm install ...args@
       dependencies:
-        - org.springframework.boot spring-boot-starter-web:{\{springVerison}\}
-        - org.springframework.boot spring-boot-starter-thymeleaf:{\{springVerison}\}
+        - org.springframework.boot spring-boot-starter-web:{\{springVersion}\}
+        - org.springframework.boot spring-boot-starter-thymeleaf:{\{springVersion}\}
       repos:
         - default: https://repo1.maven.org/maven2/
       args:
